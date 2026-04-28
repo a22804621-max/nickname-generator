@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Генератор никнеймов</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f6fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+      margin: 0;
+      color: #1a1a2e;
+    }
+
+    .container {
+      max-width: 820px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 2.8rem;
+      box-shadow: 0 30px 55px -18px rgba(0, 0, 0, 0.07), 0 10px 20px -10px rgba(0, 0, 0, 0.03);
+      padding: 2.5rem 2.5rem 2.2rem;
+      border: 1px solid #edf0f8;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 620;
+      letter-spacing: -0.3px;
+      color: #12121c;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .lang-selector {
+      position: relative;
+    }
+
+    .lang-btn {
+      background: #f9fafd;
+      border: 1px solid #d9dcec;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: 0.2s;
+      color: #1a1a2e;
+      white-space: nowrap;
+    }
+
+    .lang-btn:hover {
+      background: #eef0f8;
+      border-color: #b3b8dd;
+    }
+
+    .lang-dropdown {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: white;
+      border: 1px solid #e4e7f3;
+      border-radius: 1.2rem;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      padding: 0.5rem;
+      display: none;
+      z-index: 10;
+      min-width: 180px;
+    }
+
+    .lang-dropdown.show {
+      display: block;
+    }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
+      border-radius: 0.8rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.15s;
+      color: #1a1a2e;
+    }
+
+    .lang-option:hover {
+      background: #f0f2fc;
+    }
+
+    .lang-option.active {
+      background: #e0e4f8;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #4e4e66;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      background: #fafbfe;
+      padding: 0.9rem 1.3rem;
+      border-radius: 1.2rem;
+      border: 1px solid #edf0f9;
+    }
+
+    .controls-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      align-items: flex-end;
+      background: #f9fafd;
+      border-radius: 2rem;
+      padding: 1.2rem 1.8rem;
+      border: 1px solid #eef1f9;
+    }
+
+    .length-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .label-text {
+      font-weight: 540;
+      color: #2d2d40;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .input-number {
+      width: 60px;
+      padding: 0.55rem 0.4rem;
+      border: 1px solid #d9dcec;
+      border-radius: 0.9rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: white;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .input-number:focus {
+      border-color: #8b8fb0;
+      box-shadow: 0 0 0 3px rgba(100,100,150,0.1);
+    }
+
+    .toggle-symbols {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-left: auto;
+      background: white;
+      padding: 0.4rem 0.9rem;
+      border-radius: 2rem;
+      border: 1px solid #e2e5f2;
+    }
+
+    .toggle-symbols label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #2d2d40;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cfd4e6;
+      transition: 0.25s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.25s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #2d2d48;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .generate-btn {
+      background: #1c1c32;
+      border: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.75rem 2.2rem;
+      border-radius: 2.5rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+      margin-top: 0.2rem;
+      background: #202038;
+      box-shadow: 0 8px 16px -6px rgba(0,0,0,0.08);
+    }
+
+    .generate-btn:hover {
+      background: #2f2f4c;
+      transform: translateY(-1px);
+    }
+
+    .nickname-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin: 1.4rem 0 1rem;
+      min-height: 65px;
+    }
+
+    .nickname-item {
+      background: #ffffff;
+      border: 1px solid #e4e7f3;
+      padding: 0.7rem 1.7rem;
+      border-radius: 3rem;
+      font-size: 1.05rem;
+      font-weight: 510;
+      color: #18182b;
+      transition: 0.2s;
+      cursor: pointer;
+      animation: fadeSlide 0.25s ease;
+      background: #fcfdff;
+    }
+
+    .nickname-item:hover {
+      background: #f0f2fc;
+      border-color: #babfe0;
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(5px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .copy-hint {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #6d6d88;
+      margin-top: 0.2rem;
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        padding: 2rem 1.5rem;
+      }
+      .controls-grid {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .toggle-symbols {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <h1 id="mainTitle">🌐 Генератор ников</h1>
+      <div class="lang-selector" id="langSelector">
+        <button class="lang-btn" id="langToggleBtn">
+          <span id="currentFlag">🇷🇺</span> <span id="currentLangName">Русский</span> ▾
+        </button>
+        <div class="lang-dropdown" id="langDropdown"></div>
+      </div>
+    </div>
+
+    <div class="subtitle" id="subtitleText">
+      Генератор случайных ников. Подобрать случайный никнейм или логин на основе сочетаемости символов в литературных текстах.
+    </div>
+
+    <div class="controls-grid">
+      <div class="length-row">
+        <span class="label-text" id="lengthLabel">Длина ника</span>
+        <span>от</span>
+        <input type="number" id="minLength" class="input-number" value="4" min="2" max="15" step="1">
+        <span>до</span>
+        <input type="number" id="maxLength" class="input-number" value="8" min="2" max="18" step="1">
+        <span id="lettersLabel">букв</span>
+      </div>
+      <div class="toggle-symbols">
+        <label>
+          <span id="symbolsLabel">✨ Символы</span>
+          <label class="switch">
+            <input type="checkbox" id="symbolsToggle" checked>
+            <span class="slider"></span>
+          </label>
+        </label>
+      </div>
+      <button id="generateBtn" class="generate-btn">
+        <span>🎲</span> <span id="generateText">Сгенерировать</span>
+      </button>
+    </div>
+
+    <div id="nicknameList" class="nickname-list"></div>
+    <div class="copy-hint" id="copyHint">💡 Нажми на ник, чтобы скопировать</div>
+  </div>
+
+  <script>
+    (function() {
+      const languages = {
+        english: {
+          flag: "🇬🇧", name: "English",
+          title: "🌐 Nickname Generator",
+          subtitle: "Random nickname generator. Find a random nickname or login based on character compatibility in literary texts.",
+          lengthLabel: "Nick length", lettersLabel: "letters",
+          symbolsLabel: "✨ Symbols", generateText: "Generate",
+          copyHint: "💡 Click on a nick to copy",
+          syllables: ["ar","el","an","or","il","en","al","ir","ol","er","li","ra","ne","ro","ta","si","va","ka","re","no","mi","the","da","vi","sa","lo","na","ri","ma","la","vin","mir","lor","thal","dri","cal","wyn","lys","cor","ael","dan","phi","cas","dae","ria","ven","sol","tir"],
+          endings: ["a","e","i","o","us","is","on","an","en","ar","el","yn","ia"],
+          symbols: ["_",".","-","x","X","0","1","2","3","4","5","6","7","8","9"]
+        },
+        russian: {
+          flag: "🇷🇺", name: "Русский",
+          title: "🌐 Генератор ников",
+          subtitle: "Генератор случайных ников. Подобрать случайный никнейм или логин на основе сочетаемости символов в литературных текстах.",
+          lengthLabel: "Длина ника", lettersLabel: "букв",
+          symbolsLabel: "✨ Символы", generateText: "Сгенерировать",
+          copyHint: "💡 Нажми на ник, чтобы скопировать",
+          syllables: ["ар","ел","ан","ор","ил","ен","ал","ир","ол","ер","ли","ра","не","ро","та","си","ва","ка","ре","но","ми","те","да","ви","са","ло","на","ри","ма","ла","вин","мир","лор","таль","дри","кал","шан","вин","лис","кор","аэл","дан","фи","кас","даэ","рия","вен","сол","тир"],
+          endings: ["а","е","и","о","у","ый","ий","ов","ев","ин","ан","он","я","ь"],
+          symbols: ["_",".","-","х","Х","0","1","2","3","4","5","6","7","8","9"]
+        },
+        belarusian: {
+          flag: "🇧🇾", name: "Беларуская",
+          title: "🌐 Генератар нікаў",
+          subtitle: "Генератар выпадковых нікаў. Падабраць выпадковы нікнэйм ці лагін на аснове спалучальнасці сімвалаў у літаратурных тэкстах.",
+          lengthLabel: "Даўжыня ніка", lettersLabel: "літар",
+          symbolsLabel: "✨ Сімвалы", generateText: "Згенераваць",
+          copyHint: "💡 Націсні на нік, каб скапіяваць",
+          syllables: ["ар","ел","ан","ор","іл","ен","ал","ір","ол","ер","лі","ра","не","ро","та","сі","ва","ка","рэ","но","мі","тэ","да","ві","са","ло","на","ры","ма","ла","він","мір","лор","таль","дры","кал","шан","він","ліс","кор","аэл","дан","фі","кас","даэ","рыя","вен","сол","цір"],
+          endings: ["а","е","і","о","у","ы","ій","оў","еў","ін","ан","он","я","ь"],
+          symbols: ["_",".","-","х","Х","0","1","2","3","4","5","6","7","8","9"]
+        },
+        ukrainian: {
+          flag: "🇺🇦", name: "Українська",
+          title: "🌐 Генератор ніків",
+          subtitle: "Генератор випадкових ніків. Підібрати випадковий нікнейм або логін на основі сполучуваності символів у літературних текстах.",
+          lengthLabel: "Довжина ніка", lettersLabel: "літер",
+          symbolsLabel: "✨ Символи", generateText: "Згенерувати",
+          copyHint: "💡 Натисни на нік, щоб скопіювати",
+          syllables: ["ар","ел","ан","ор","іл","ен","ал","ір","ол","ер","лі","ра","не","ро","та","сі","ва","ка","ре","но","мі","те","да","ві","са","ло","на","ри","ма","ла","вин","мір","лор","таль","дри","кал","шан","вин","лис","кор","аел","дан","фі","кас","дае","рія","вен","сол","тир"],
+          endings: ["а","е","і","о","у","ий","ій","ов","ев","ин","ан","он","я","ь"],
+          symbols: ["_",".","-","х","Х","0","1","2","3","4","5","6","7","8","9"]
+        },
+        kazakh: {
+          flag: "🇰🇿", name: "Қазақша",
+          title: "🌐 Ник генераторы",
+          subtitle: "Кездейсоқ никтер генераторы. Әдеби мәтіндердегі таңбалардың үйлесімділігі негізінде кездейсоқ никнейм немесе логин таңдаңыз.",
+          lengthLabel: "Ник ұзындығы", lettersLabel: "әріп",
+          symbolsLabel: "✨ Таңбалар", generateText: "Генерациялау",
+          copyHint: "💡 Көшіру үшін никты басыңыз",
+          syllables: ["ар","ел","ан","ор","ыл","ен","ал","ыр","ол","ер","лі","ра","не","ро","та","сі","ва","қа","ре","но","мі","те","да","ві","са","ло","на","ры","ма","ла","жан","мір","лор","тал","дрі","қал","шан","бек","лыс","қор","әел","дан","фі","қас","да","рия","вен","сол","тір"],
+          endings: ["а","е","ы","і","у","ұ","ды","мен","дан","нен","бек","тай","жан"],
+          symbols: ["_",".","-","0","1","2","3","4","5","6","7","8","9"]
+        },
+        french: {
+          flag: "🇫🇷", name: "Français",
+          title: "🌐 Générateur de pseudos",
+          subtitle: "Générateur de pseudos aléatoires. Trouvez un pseudo ou un login aléatoire basé sur la compatibilité des caractères dans les textes littéraires.",
+          lengthLabel: "Longueur du pseudo", lettersLabel: "lettres",
+          symbolsLabel: "✨ Symboles", generateText: "Générer",
+          copyHint: "💡 Cliquez sur un pseudo pour copier",
+          syllables: ["ar","el","an","or","il","en","al","ir","ol","er","li","ra","ne","ro","ta","si","va","ca","re","no","mi","the","da","vi","sa","lo","na","ri","ma","la","vin","mir","lor","thal","dri","cal","ch","eau","oux","elle","ette","ard"],
+          endings: ["e","é","eau","oux","ette","elle","ard","eur","ois"],
+          symbols: ["_",".","-","x","X","0","1","2","3","4","5","6","7","8","9","'"]
+        },
+        spanish: {
+          flag: "🇪🇸", name: "Español",
+          title: "🌐 Generador de nicks",
+          subtitle: "Generador de nicks aleatorios. Encuentra un nick o login aleatorio basado en la compatibilidad de caracteres en textos literarios.",
+          lengthLabel: "Longitud del nick", lettersLabel: "letras",
+          symbolsLabel: "✨ Símbolos", generateText: "Generar",
+          copyHint: "💡 Haz clic en un nick para copiar",
+          syllables: ["ar","el","an","or","il","en","al","ir","ol","er","li","ra","ne","ro","ta","si","va","ca","re","no","mi","te","da","vi","sa","lo","na","ri","ma","la","vin","mir","lor","tal","dri","cal","ción","dad","ero","ito","illa"],
+          endings: ["a","o","e","ico","ito","illa","ción","dad","ero"],
+          symbols: ["_",".","-","x","X","0","1","2","3","4","5","6","7","8","9"]
+        },
+        japanese: {
+          flag: "🇯🇵", name: "日本語",
+          title: "🌐 ニックネーム生成",
+          subtitle: "ランダムニックネームジェネレーター。文学テキストの文字互換性に基づいてランダムなニックネームやログインを見つけます。",
+          lengthLabel: "ニックの長さ", lettersLabel: "文字",
+          symbolsLabel: "✨ 記号", generateText: "生成する",
+          copyHint: "💡 ニックをクリックしてコピー",
+          syllables: ["ka","ki","ku","ke","ko","sa","shi","su","se","so","ta","chi","tsu","te","to","na","ni","nu","ne","no","ha","hi","fu","he","ho","ma","mi","mu","me","mo","ya","yu","yo","ra","ri","ru","re","ro","wa","wo","n"],
+          endings: ["","n","ko","mi","ki","ka","ru","to"],
+          symbols: ["_",".","-","0","1","2","3","4","5","6","7","8","9"]
+        },
+        german: {
+          flag: "🇩🇪", name: "Deutsch",
+          title: "🌐 Nickname-Generator",
+          subtitle: "Zufälliger Nickname-Generator. Finden Sie einen zufälligen Nicknamen oder Login basierend auf der Zeichenkompatibilität in literarischen Texten.",
+          lengthLabel: "Nick-Länge", lettersLabel: "Buchstaben",
+          symbolsLabel: "✨ Symbole", generateText: "Generieren",
+          copyHint: "💡 Klicken Sie auf einen Nick, um zu kopieren",
+          syllables: ["ar","el","an","or","il","en","al","ir","ol","er","li","ra","ne","ro","ta","si","va","ka","re","no","mi","the","da","vi","sa","lo","na","ri","ma","la","vin","mir","lor","thal","dri","cal","sch","ach","eit","ung","lich"],
+          endings: ["e","er","en","el","ung","heit","keit","lich"],
+          symbols: ["_",".","-","x","X","0","1","2","3","4","5","6","7","8","9"]
+        },
+        italian: {
+          flag: "🇮🇹", name: "Italiano",
+          title: "🌐 Generatore di nickname",
+          subtitle: "Generatore di nickname casuali. Trova un nickname o login casuale basato sulla compatibilità dei caratteri nei testi letterari.",
+          lengthLabel: "Lunghezza nick", lettersLabel: "lettere",
+          symbolsLabel: "✨ Simboli", generateText: "Genera",
+          copyHint: "💡 Clicca su un nick per copiare",
+          syllables: ["ar","el","an","or","il","en","al","ir","ol","er","li","ra","ne","ro","ta","si","va","ca","re","no","mi","te","da","vi","sa","lo","na","ri","ma","la","vin","mir","lor","tal","dri","cal","zio","ino","ella","etti"],
+          endings: ["a","o","e","ino","ello","etto","one","ino"],
+          symbols: ["_",".","-","x","X","0","1","2","3","4","5","6","7","8","9"]
+        }
+      };
+
+      const GENERATE_COUNT = 8;
+      let currentLang = 'russian';
+
+      const mainTitle = document.getElementById('mainTitle');
+      const subtitleText = document.getElementById('subtitleText');
+      const lengthLabel = document.getElementById('lengthLabel');
+      const lettersLabel = document.getElementById('lettersLabel');
+      const symbolsLabel = document.getElementById('symbolsLabel');
+      const generateText = document.getElementById('generateText');
+      const copyHint = document.getElementById('copyHint');
+      const currentFlag = document.getElementById('currentFlag');
+      const currentLangName = document.getElementById('currentLangName');
+      const langDropdown = document.getElementById('langDropdown');
+      const langToggleBtn = document.getElementById('langToggleBtn');
+      const minLengthInput = document.getElementById('minLength');
+      const maxLengthInput = document.getElementById('maxLength');
+      const symbolsToggle = document.getElementById('symbolsToggle');
+      const generateBtn = document.getElementById('generateBtn');
+      const nicknameListDiv = document.getElementById('nicknameList');
+
+      function renderDropdown() {
+        langDropdown.innerHTML = '';
+        for (const [key, data] of Object.entries(languages)) {
+          const div = document.createElement('div');
+          div.className = 'lang-option' + (key === currentLang ? ' active' : '');
+          div.innerHTML = `${data.flag} ${data.name}`;
+          div.dataset.lang = key;
+          div.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentLang === key) {
+              langDropdown.classList.remove('show');
+              return;
+            }
+            currentLang = key;
+            updateInterface();
+            renderDropdown();
+            langDropdown.classList.remove('show');
+            handleGenerate();
+          });
+          langDropdown.appendChild(div);
+        }
+      }
+
+      function updateInterface() {
+        const lang = languages[currentLang];
+        mainTitle.textContent = lang.title;
+        subtitleText.textContent = lang.subtitle;
+        lengthLabel.textContent = lang.lengthLabel;
+        lettersLabel.textContent = lang.lettersLabel;
+        symbolsLabel.textContent = lang.symbolsLabel;
+        generateText.textContent = lang.generateText;
+        copyHint.textContent = lang.copyHint;
+        currentFlag.textContent = lang.flag;
+        currentLangName.textContent = lang.name;
+      }
+
+      langToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        langDropdown.classList.toggle('show');
+      });
+
+      document.addEventListener('click', () => {
+        langDropdown.classList.remove('show');
+      });
+
+      function generateSingleNick(minLen, maxLen, useSymbols) {
+        const data = languages[currentLang];
+        const syllables = data.syllables;
+        const endings = data.endings;
+        const symbols = data.symbols || [];
+        let targetLength = Math.floor(Math.random() * (maxLen - minLen + 1)) + minLen;
+        targetLength = Math.max(2, targetLength);
+        let nick = syllables[Math.floor(Math.random() * syllables.length)];
+        while (nick.length < targetLength) {
+          const remaining = targetLength - nick.length;
+          if (remaining <= 2 && Math.random() > 0.3 && endings.length) {
+            const short = endings.filter(e => e.length <= remaining);
+            nick += short.length ? short[Math.floor(Math.random() * short.length)] : syllables[Math.floor(Math.random() * syllables.length)].substring(0, remaining);
+          } else {
+            const next = syllables[Math.floor(Math.random() * syllables.length)];
+            if (nick.length + next.length > targetLength) {
+              const slice = targetLength - nick.length;
+              if (slice > 0) nick += next.substring(0, slice);
+            } else nick += next;
+          }
+        }
+        nick = nick.substring(0, targetLength);
+        nick = nick.charAt(0).toUpperCase() + nick.slice(1).toLowerCase();
+        if (useSymbols && symbols.length && Math.random() < 0.45) {
+          const sym = symbols[Math.floor(Math.random() * symbols.length)];
+          if (Math.random() > 0.5) nick += sym;
+          else if (nick.length > 2) {
+            const pos = Math.floor(Math.random() * (nick.length - 1)) + 1;
+            nick = nick.slice(0, pos) + sym + nick.slice(pos);
+          }
+        }
+        return nick;
+      }
+
+      function generateNicknames(count = GENERATE_COUNT) {
+        const minLen = parseInt(minLengthInput.value, 10) || 4;
+        const maxLen = parseInt(maxLengthInput.value, 10) || 8;
+        const useSymbols = symbolsToggle.checked;
+        const validMin = Math.max(2, Math.min(minLen, 15));
+        const validMax = Math.max(validMin, Math.min(maxLen, 18));
+        if (minLen !== validMin) minLengthInput.value = validMin;
+        if (maxLen !== validMax) maxLengthInput.value = validMax;
+        const set = new Set();
+        for (let i = 0; i < count * 2 && set.size < count; i++) {
+          const nick = generateSingleNick(validMin, validMax, useSymbols);
+          if (nick && nick.length >= validMin) set.add(nick);
+        }
+        return Array.from(set).slice(0, count);
+      }
+
+      function renderList(nicks) {
+        nicknameListDiv.innerHTML = '';
+        if (!nicks.length) {
+          nicknameListDiv.innerHTML = '<div style="color:#8c8ca0; padding:0.5rem;">—</div>';
+          return;
+        }
+        nicks.forEach(nick => {
+          const span = document.createElement('span');
+          span.className = 'nickname-item';
+          span.textContent = nick;
+          span.addEventListener('click', () => copyToClipboard(nick));
+          nicknameListDiv.appendChild(span);
+        });
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          copyHint.textContent = '✅ ' + text;
+          copyHint.style.color = '#2e7d32';
+          setTimeout(() => {
+            copyHint.textContent = languages[currentLang].copyHint;
+            copyHint.style.color = '#6d6d88';
+          }, 1500);
+        }).catch(() => alert('Не удалось скопировать: ' + text));
+      }
+
+      function handleGenerate() {
+        renderList(generateNicknames(GENERATE_COUNT));
+      }
+
+      function init() {
+        updateInterface();
+        renderDropdown();
+        handleGenerate();
+
+        generateBtn.addEventListener('click', handleGenerate);
+        symbolsToggle.addEventListener('change', handleGenerate);
+        [minLengthInput, maxLengthInput].forEach(inp => {
+          inp.addEventListener('keypress', e => { if (e.key === 'Enter') handleGenerate(); });
+          inp.addEventListener('change', handleGenerate);
+        });
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
