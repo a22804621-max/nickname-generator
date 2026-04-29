@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Генератор никнеймов</title>
+  <title>Nickname Generator</title>
   <style>
     * {
       margin: 0;
@@ -318,31 +318,31 @@
 <body>
   <div class="container">
     <div class="top-bar">
-      <h1 id="mainTitle">🌐 Генератор ников</h1>
+      <h1 id="mainTitle">🌐 Nickname Generator</h1>
       <div class="lang-selector" id="langSelector">
         <button class="lang-btn" id="langToggleBtn">
-          <span id="currentFlag">🇷🇺</span> <span id="currentLangName">Русский</span> ▾
+          <span id="currentFlag">🇬🇧</span> <span id="currentLangName">English</span> ▾
         </button>
         <div class="lang-dropdown" id="langDropdown"></div>
       </div>
     </div>
 
     <div class="subtitle" id="subtitleText">
-      Генератор случайных ников. Подобрать случайный никнейм или логин на основе сочетаемости символов в литературных текстах.
+      Random nickname generator. Find a random nickname or login based on character compatibility in literary texts.
     </div>
 
     <div class="controls-grid">
       <div class="length-row">
-        <span class="label-text" id="lengthLabel">Длина ника</span>
-        <span>от</span>
+        <span class="label-text" id="lengthLabel">Nick length</span>
+        <span>from</span>
         <input type="number" id="minLength" class="input-number" value="4" min="2" max="15" step="1">
-        <span>до</span>
+        <span>to</span>
         <input type="number" id="maxLength" class="input-number" value="8" min="2" max="18" step="1">
-        <span id="lettersLabel">букв</span>
+        <span id="lettersLabel">letters</span>
       </div>
       <div class="toggle-symbols">
         <label>
-          <span id="symbolsLabel">✨ Символы</span>
+          <span id="symbolsLabel">✨ Symbols</span>
           <label class="switch">
             <input type="checkbox" id="symbolsToggle" checked>
             <span class="slider"></span>
@@ -350,12 +350,12 @@
         </label>
       </div>
       <button id="generateBtn" class="generate-btn">
-        <span>🎲</span> <span id="generateText">Сгенерировать</span>
+        <span>🎲</span> <span id="generateText">Generate</span>
       </button>
     </div>
 
     <div id="nicknameList" class="nickname-list"></div>
-    <div class="copy-hint" id="copyHint">💡 Нажми на ник, чтобы скопировать</div>
+    <div class="copy-hint" id="copyHint">💡 Click on a nick to copy</div>
   </div>
 
   <script>
@@ -474,7 +474,7 @@
       };
 
       const GENERATE_COUNT = 8;
-      let currentLang = 'russian';
+      let currentLang = 'english';
 
       const mainTitle = document.getElementById('mainTitle');
       const subtitleText = document.getElementById('subtitleText');
@@ -611,7 +611,7 @@
             copyHint.textContent = languages[currentLang].copyHint;
             copyHint.style.color = '#6d6d88';
           }, 1500);
-        }).catch(() => alert('Не удалось скопировать: ' + text));
+        }).catch(() => alert('Failed to copy: ' + text));
       }
 
       function handleGenerate() {
