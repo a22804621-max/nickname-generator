@@ -72,7 +72,3 @@ The algorithm combines syllables, adjusts to the selected length, adds symbols (
 | `✨ Symbols` toggle | Enable/disable numbers and special characters |
 | `🎲 Generate` button | Create a new batch of 8 nicknames |
 | Any generated nickname | Copy it to clipboard |
-
----
-
-## 🧩 Project Structure
